@@ -98,11 +98,10 @@ whitespace = [ \t\r\n]
 ")"           {return new Token(TokenConstant.P_C, yytext(), yyline, yycolumn);}
 "{"           {return new Token(TokenConstant.LL_A, yytext(), yyline, yycolumn);}
 "}"           {return new Token(TokenConstant.LL_C, yytext(), yyline, yycolumn);}
-"\""           {return new Token(TokenConstant.QUOTE, yytext(), yyline, yycolumn);}
 "'"           {return new Token(TokenConstant.S_QUOTE, yytext(), yyline, yycolumn);}
 
 
-{identificador}              {return new Token(TokenConstant.ID, yytext(), yyline, yycolumn);}
+{identificador}              {return new Token(TokenConstant.IDENTIFICADOR, yytext(), yyline, yycolumn);}
 {num}                        {return new Token(TokenConstant.DIGIT, yytext(), yyline, yycolumn);}
 {decim}                       {return new Token(TokenConstant.DECIMAL, yytext(), yyline, yycolumn);}
 {chr}                       {return new Token(TokenConstant.CARACTER, yytext(), yyline, yycolumn);}

@@ -6,7 +6,7 @@ import java_cup.runtime.Symbol;
 
 %%
 %public
-%class MiLexer
+%class MiLexerCup
 
 digit = [0-9]
 decim={digit}+(\.){digit}+
@@ -24,11 +24,12 @@ whitespace = [ \t\r\n]
 %cup
 
 
+
 %state STRING
 
 %eofval{
     
-    return new Token(TokenConstant.EOF, null);
+    return new Symbol(sym.EOF, null);
 
 %eofval}
 
@@ -110,11 +111,10 @@ whitespace = [ \t\r\n]
 ")"           {return new Symbol(sym.P_C, yyline, yychar, yytext());}
 "{"           {return new Symbol(sym.LL_A, yyline, yychar, yytext());}
 "}"           {return new Symbol(sym.LL_C, yyline, yychar, yytext());}
-"\""           {return new Symbol(sym.QUOTE, yyline, yychar, yytext());}
 "'"           {return new Symbol(sym.S_QUOTE, yyline, yychar, yytext());}
 
 
-{identificador}              {return new Symbol(sym.ID, yyline, yychar, yytext());}
+{identificador}              {return new Symbol(sym.IDENTIFICADOR, yyline, yychar, yytext());}
 {num}                        {return new Symbol(sym.DIGIT, yyline, yychar, yytext());}
 {decim}                       {return new Symbol(sym.DECIMAL, yyline, yychar, yytext());}
 {chr}                       {return new Symbol(sym.CARACTER, yyline, yychar, yytext());}
