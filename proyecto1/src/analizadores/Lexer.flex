@@ -8,14 +8,20 @@ import java.io.*;
 %class MiLexer
 
 digit = [0-9]
+decim={digit}+(\.){digit}+
+num=(\-)?{digit}+
 letter = [a-zA-Z]
 identificador = {letter}({letter}|{digit}|\_)*
 simpleComment=(\/\/)(.)*
 multiComment=(\/\*)[^\*\/]*(\*\/)
-
+chr=(\'){letter}(\')|(\'){digit}(\')
 whitespace = [ \t\r\n]
 
 %type Token
+%line
+%column
+
+%state STRING
 
 %eofval{
     
@@ -24,114 +30,85 @@ whitespace = [ \t\r\n]
 %eofval}
 
 
+%{
+    StringBuffer string = new StringBuffer();    
+%}
+
 %%
 
 //reglas lexicas
+<YYINITIAL>{
+\"      {string.setLength(0); yybegin(STRING);}
+}
+<STRING> {
+      \"                             { yybegin(YYINITIAL); 
+                                      return new Token(TokenConstant.CADENA, string.toString(), yyline, yycolumn);
+                                     }
+      [^\n\r\"\\]+                   { string.append( yytext() ); }
+      \\t                            { string.append('\t'); }
+      \\n                            { string.append('\n'); }
 
-"abstract"           {return new Token(TokenConstant.ABSTRACT, yytext());}
-"break"           {return new Token(TokenConstant.BREAK, yytext());}
-"char"           {return new Token(TokenConstant.CHAR, "var");}
-"continue"           {return new Token(TokenConstant.CONTINUE, yytext());}
-"do"           {return new Token(TokenConstant.DO, yytext());}
-"event"           {return new Token(TokenConstant.EVENT, yytext());}
-"finally"           {return new Token(TokenConstant.FINALLY, yytext());}
-"foreach"           {return new Token(TokenConstant.FOREACH, yytext());}
-"in"           {return new Token(TokenConstant.IN, yytext());}
-"is"           {return new Token(TokenConstant.IS, yytext());}
-"new"           {return new Token(TokenConstant.NEW, yytext());}
-"out"           {return new Token(TokenConstant.OUT, yytext());}
-"protected"           {return new Token(TokenConstant.PROTECTED, yytext());}
-"return"           {return new Token(TokenConstant.RETURN, yytext());}
-"sizeof"           {return new Token(TokenConstant.SIZEOF, yytext());}
-"struct"           {return new Token(TokenConstant.STRUCT, yytext());}
-"true"           {return new Token(TokenConstant.TRUE, yytext());}
-"ulong"           {return new Token(TokenConstant.ULONG, "var");}
-"using"           {return new Token(TokenConstant.USING, yytext());}
-"as"           {return new Token(TokenConstant.AS, yytext());}
-"byte"           {return new Token(TokenConstant.BYTE, "var");}
-"checked"           {return new Token(TokenConstant.CHECKED, yytext());}
-"decimal"           {return new Token(TokenConstant.DECIMAL, "var");}
-"double"           {return new Token(TokenConstant.DOUBLE, "var");}
-"explicit"           {return new Token(TokenConstant.EXPLICIT, yytext());}
-"fixed"           {return new Token(TokenConstant.FIXED, yytext());}
-"goto"           {return new Token(TokenConstant.GOTO, yytext());}
-"int"           {return new Token(TokenConstant.INT, "var");}
-"lock"           {return new Token(TokenConstant.LOCK, yytext());}
-"null"           {return new Token(TokenConstant.NULL, yytext());}
-"override"           {return new Token(TokenConstant.OVERRIDE, yytext());}
-"public"           {return new Token(TokenConstant.PUBLIC, yytext());}
-"sbyte"           {return new Token(TokenConstant.SBYTE, "var");}
-"stackalloc"           {return new Token(TokenConstant.STACKALLOC, yytext());}
-"switch"           {return new Token(TokenConstant.SWITCH, yytext());}
-"try"           {return new Token(TokenConstant.TRY, yytext());}
-"unchecked"           {return new Token(TokenConstant.UNCHECKED, yytext());}
-"virtual"           {return new Token(TokenConstant.VIRTUAL, yytext());}
-"base"           {return new Token(TokenConstant.BASE, yytext());}
-"case"           {return new Token(TokenConstant.CASE, yytext());}
-"class"           {return new Token(TokenConstant.CLASS, yytext());}
-"default"           {return new Token(TokenConstant.DEFAULT, yytext());}
-"else"           {return new Token(TokenConstant.ELSE, yytext());}
-"extern"           {return new Token(TokenConstant.EXTERN, yytext());}
-"float"           {return new Token(TokenConstant.FLOAT, "var");}
-"if"           {return new Token(TokenConstant.IF, yytext());}
-"long"           {return new Token(TokenConstant.LONG, "var");}
-"object"           {return new Token(TokenConstant.OBJECT, "var");}
-"params"           {return new Token(TokenConstant.PARAMS, yytext());}
-"readonly"           {return new Token(TokenConstant.READONLY, yytext());}
-"sealed"           {return new Token(TokenConstant.SEALED, yytext());}
-"static"           {return new Token(TokenConstant.STATIC, yytext());}
-"this"           {return new Token(TokenConstant.THIS, yytext());}
-"typeof"           {return new Token(TokenConstant.TYPEOF, yytext());}
-"unsafe"           {return new Token(TokenConstant.UNSAFE, yytext());}
-"void"           {return new Token(TokenConstant.VOID, yytext());}
-"bool"           {return new Token(TokenConstant.BOOL, "var");}
-"catch"           {return new Token(TokenConstant.CATCH, yytext());}
-"const"           {return new Token(TokenConstant.CONST, yytext());}
-"delegate"           {return new Token(TokenConstant.DELEGATE, yytext());}
-"enum"           {return new Token(TokenConstant.ENUM   , yytext());}
-"false"           {return new Token(TokenConstant.FALSE, yytext());}
-"for"           {return new Token(TokenConstant.FOR, yytext());}
-"implicit"           {return new Token(TokenConstant.IMPLICIT, yytext());}
-"internal"           {return new Token(TokenConstant.INTERNAL, yytext());}
-"namespace"           {return new Token(TokenConstant.NAMESPACE, yytext());}
-"operator"           {return new Token(TokenConstant.OPERATOR, yytext());}
-"private"           {return new Token(TokenConstant.PRIVATE, yytext());}
-"ref"           {return new Token(TokenConstant.REF, yytext());}
-"short"           {return new Token(TokenConstant.SHORT, "var");}
-"string"           {return new Token(TokenConstant.STRING, yytext());}
-"throw"           {return new Token(TokenConstant.THROW, yytext());}
-"uint"           {return new Token(TokenConstant.UINT, "var");}
-"ushort"           {return new Token(TokenConstant.USHORT, "var");}
-"while"           {return new Token(TokenConstant.WHILE, yytext());}
-"interface"           {return new Token(TokenConstant.INTERFACE, yytext());}
+      \\r                            { string.append('\r'); }
+      \\\"                           { string.append('\"'); }
+      \\                             { string.append('\\'); }
+    }
+
+"break"           {return new Token(TokenConstant.BREAK, yytext(), yyline, yycolumn);}
+"continue"           {return new Token(TokenConstant.CONTINUE, yytext(), yyline, yycolumn);}
+"do"           {return new Token(TokenConstant.DO, yytext(), yyline, yycolumn);}
+"foreach"           {return new Token(TokenConstant.FOREACH, yytext(), yyline, yycolumn);}
+"new"           {return new Token(TokenConstant.NEW, yytext(), yyline, yycolumn);}
+"out"           {return new Token(TokenConstant.OUT, yytext(), yyline, yycolumn);}
+"return"           {return new Token(TokenConstant.RETURN, yytext(), yyline, yycolumn);}
+"true"           {return new Token(TokenConstant.BOOLEANO, yytext(), yyline, yycolumn);}
+"double"           {return new Token(TokenConstant.DOUBLE,yytext(), yyline, yycolumn);}
+"int"           {return new Token(TokenConstant.INT, yytext(), yyline, yycolumn);}
+"null"           {return new Token(TokenConstant.NULL, yytext(), yyline, yycolumn);}
+"public"           {return new Token(TokenConstant.PUBLIC, yytext(), yyline, yycolumn);}
+"switch"           {return new Token(TokenConstant.SWITCH, yytext(), yyline, yycolumn);}
+"case"           {return new Token(TokenConstant.CASE, yytext(), yyline, yycolumn);}
+"default"           {return new Token(TokenConstant.DEFAULT, yytext(), yyline, yycolumn);}
+"else"           {return new Token(TokenConstant.ELSE, yytext(), yyline, yycolumn);}  
+"if"           {return new Token(TokenConstant.IF, yytext(), yyline, yycolumn);}
+"static"           {return new Token(TokenConstant.STATIC, yytext(), yyline, yycolumn);}
+"void"           {return new Token(TokenConstant.VOID, yytext(), yyline, yycolumn);}
+"bool"           {return new Token(TokenConstant.BOOL, yytext(), yyline, yycolumn);}
+"const"           {return new Token(TokenConstant.CONST, yytext(), yyline, yycolumn);}
+"false"           {return new Token(TokenConstant.BOOLEANO, yytext(), yyline, yycolumn);}
+"for"           {return new Token(TokenConstant.FOR, yytext(), yyline, yycolumn);}
+"string"           {return new Token(TokenConstant.STRING, yytext(), yyline, yycolumn);}
+"while"           {return new Token(TokenConstant.WHILE, yytext(), yyline, yycolumn);}
+"Console.Write"   {return new Token(TokenConstant.PRINT, yytext(), yyline, yycolumn);}
 
 //Signos
-"+"           {return new Token(TokenConstant.PLUS, yytext());}
-"-"           {return new Token(TokenConstant.LESS, yytext());}
-"*"           {return new Token(TokenConstant.MULT, yytext());}
-"/"           {return new Token(TokenConstant.DIV, yytext());}
-"<"           {return new Token(TokenConstant.MIN, yytext());}
-">"           {return new Token(TokenConstant.GREATER, yytext());}
-"="           {return new Token(TokenConstant.EQUAL, yytext());}
-","           {return new Token(TokenConstant.COMA, yytext());}
-";"           {return new Token(TokenConstant.SEMI_COLON, yytext());}
-"."           {return new Token(TokenConstant.POINT, yytext());}
-":"           {return new Token(TokenConstant.T_POINTS, yytext());}
+"+"           {return new Token(TokenConstant.PLUS, yytext(), yyline, yycolumn);}
+"-"           {return new Token(TokenConstant.LESS, yytext(), yyline, yycolumn);}
+"*"           {return new Token(TokenConstant.MULT, yytext(), yyline, yycolumn);}
+"/"           {return new Token(TokenConstant.DIV, yytext(), yyline, yycolumn);}
+"<"           {return new Token(TokenConstant.MIN, yytext(), yyline, yycolumn);}
+">"           {return new Token(TokenConstant.GREATER, yytext(), yyline, yycolumn);}
+"="           {return new Token(TokenConstant.EQUAL, yytext(), yyline, yycolumn);}
+","           {return new Token(TokenConstant.COMA, yytext(), yyline, yycolumn);}
+";"           {return new Token(TokenConstant.SEMI_COLON, yytext(), yyline, yycolumn);}
+"."           {return new Token(TokenConstant.POINT, yytext(), yyline, yycolumn);}
+":"           {return new Token(TokenConstant.T_POINTS, yytext(), yyline, yycolumn);}
 
 //Signos de agrupacion
-"("           {return new Token(TokenConstant.P_A, yytext());}
-")"           {return new Token(TokenConstant.P_C, yytext());}
-"{"           {return new Token(TokenConstant.LL_A, yytext());}
-"}"           {return new Token(TokenConstant.LL_C, yytext());}
-"\""           {return new Token(TokenConstant.QUOTE, yytext());}
-"'"           {return new Token(TokenConstant.S_QUOTE, yytext());}
+"("           {return new Token(TokenConstant.P_A, yytext(), yyline, yycolumn);}
+")"           {return new Token(TokenConstant.P_C, yytext(), yyline, yycolumn);}
+"{"           {return new Token(TokenConstant.LL_A, yytext(), yyline, yycolumn);}
+"}"           {return new Token(TokenConstant.LL_C, yytext(), yyline, yycolumn);}
+"\""           {return new Token(TokenConstant.QUOTE, yytext(), yyline, yycolumn);}
+"'"           {return new Token(TokenConstant.S_QUOTE, yytext(), yyline, yycolumn);}
 
 
+{identificador}              {return new Token(TokenConstant.ID, yytext(), yyline, yycolumn);}
+{num}                        {return new Token(TokenConstant.DIGIT, yytext(), yyline, yycolumn);}
+{decim}                       {return new Token(TokenConstant.DECIMAL, yytext(), yyline, yycolumn);}
+{chr}                       {return new Token(TokenConstant.CARACTER, yytext(), yyline, yycolumn);}
+{simpleComment}   {return new Token(TokenConstant.SIMPLE_COMMENT, yytext(), yyline, yycolumn);}
+{multiComment}    {return new Token(TokenConstant.MULTI_COMMENT, yytext(), yyline, yycolumn);}
 
-{identificador}                  {return new Token(TokenConstant.ID, yytext());}
-{digit}+                        {return new Token(TokenConstant.DIGIT, yytext());}
-{simpleComment}   {return new Token(TokenConstant.SIMPLE_COMMENT, "\'\'\'"+yytext()+"\'\'\'");}
-{multiComment}    {return new Token(TokenConstant.MULTI_COMMENT, yytext());}
 {whitespace}+     {/*Ignore*/}
 [^]               {return new Token(TokenConstant.ERROR, yytext());}
 
