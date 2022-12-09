@@ -31,14 +31,16 @@ public class main {
         String rutaLexer = "J:/Universidad/Vaqueras-Guate/Compi 1/Laboratorio/PROYECTOS/Proyecto1/proyecto1/src/analizadores/Lexer.flex";
         String rutaLexerCup = "J:/Universidad/Vaqueras-Guate/Compi 1/Laboratorio/PROYECTOS/Proyecto1/proyecto1/src/analizadores/LexerCup.flex";
         String[] rutaSintax = {"-parser", "Sintax", "J:/Universidad/Vaqueras-Guate/Compi 1/Laboratorio/PROYECTOS/Proyecto1/proyecto1/src/analizadores/Sintax.cup"};
-
+        
+        //Generamos el Lexer.flex
         File archivo = new File(rutaLexer);
         JFlex.Main.generate(archivo);
 
-        //Generamos el Lexer para cup
+        //Generamos el LexerCup.flex para cup
         File archivo2 = new File(rutaLexerCup);
         JFlex.Main.generate(archivo2);
-
+        
+        //Generamos el Sintax.cup
         java_cup.Main.main(rutaSintax);
 
         //ruta del sym.java

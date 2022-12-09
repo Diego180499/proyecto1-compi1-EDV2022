@@ -110,5 +110,5 @@ whitespace = [ \t\r\n]
 {multiComment}    {return new Token(TokenConstant.MULTI_COMMENT, yytext(), yyline, yycolumn);}
 
 {whitespace}+     {/*Ignore*/}
-[^]               {return new Token(TokenConstant.ERROR, yytext());}
+[^]               {return new Token(TokenConstant.ERROR, yytext(), yyline, yycolumn);}
 
