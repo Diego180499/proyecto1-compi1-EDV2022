@@ -1,1 +1,0 @@
- 5 " esto es string"  12.5
