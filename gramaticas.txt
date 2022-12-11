@@ -1,0 +1,240 @@
+_____________________________________________________INICIO_____________________________________________________
+
+0. INICIO: INSTRUCCIONES
+
+->INSTRUCCIONES: INSTRUCCION INSTRUCCIONES
+		| INSTRUCCION
+;
+
+INSTRUCCION: SENTENCIAS
+
+_____________________________________________________SENTENCIAS GENERALES
+<SENTENCIAS>:
+las sentencias son: Sentencias de Control, Asignacion general, Asignacion simple, declaracion de variable, lista de declaraciones, llamadas a funciones, declaracion de funciones, comentarios, imprimir
+POSIBLE GRAMATICA:
+SG:
+    SC SG
+  | AG SG
+  | AS SG
+  | DV SG
+  | LD SG
+  | LLF SG
+  | DF SG
+  | COM SG
+  | IMPRIMIR SG
+  | vacio
+;
+
+
+
+
+_____________________________________________________ASIGNACIONES GENERALES_____________________________________________________
+
+1. ASIGNACION GENERAL:
+int numero1 = 5;
+String nombre1 = "Diego";
+int var = suma(parametros);
+int var = 5+5;
+int var = numero1;
+String var = getNombre();
+String var = "Diego";
+String var = nombre1;
+char caracter1 = 'a';
+char caracter = getChar();
+char caracter = char1;
+puede venir: digito, cadena, identificadores, funciones,
+POSIBLE GRAMATICA -> tipo_de_dato identificador igual EXPRESION GENERAL PUNTO_COMA
+
+EXPRESION GENERAL_____________________________________________________
+4. EXPRESEION GENERAL:
+5+6*8/9 -> Expresiones Aritmeticas ;
+suma()  -> llamadas a funciones
+numero1  -> llamadas a variables -> identificador ;
+true|false  -> booleano ;
+
+_____________________________________________________ASIGNACION SIMPLE_____________________________________________________
+
+
+1.2 ASIGNACION SIMPLE:
+numero1 = 5;
+
+_____________________________________________________DECLARACION DE VARIABLES_____________________________________________________
+
+2. DECLARACION DE VARIABLE:
+int numero1;
+String nombre1;
+tipo_de_dato identificador;
+
+_____________________________________________________LISTA DE DECLARACIONES_____________________________________________________
+
+3. LISTA DE DECLARACIONES:
+int num1, num2, num3;
+String nombre1, nombre2, nombre3;
+tipo_de_dato identificador coma identificador... punto_coma
+
+
+
+_____________________________________________________LLAMADAS A FUNCIONES_____________________________________________________
+
+5. LLAMADAS A FUNCIONES
+sumar(PARAMETROS) ;
+POSIBLE GRAMATICA -> identificador par_a PARAMETROS par_c punto_coma
+
+6. PARAMETROS:
+id1, id2, id3
+id1
+vacio
+POSIBLE GRAMATICA -> identificador coma PARAMETROS |identificador | vacio
+
+
+_____________________________________________________DECLARACION DE METODOS/FUNCIONES_____________________________________________________
+
+8. DECLARACION DE METODOS/FUNCIONES: DF
+TIPO_DE_DATO IDENTIFICADOR(PARAMETROS CON TIPO){
+ <sentencias>
+RETURN EXPR_GENERAL P_COMA
+}
+
+VOID MAIN(){
+ <sentencias>
+}
+
+void sumar(PARAMETROS CON TIPO){
+ <sentencias>
+}
+
+7. PARAMETROS CON TIPO DE DATO
+String param1, int param2
+String param1
+vacio
+POSIBLE GRAMATICA -> tipo_de_dato identificador coma PARAMETROS_TYPE | tipo_de_dato identificador | vacio
+
+
+
+_____________________________________________________SENTENCIAS DE CONTROL_____________________________________________________
+
+PRODUCCION QUE GENERA SENTENCIAS DE CONTROL
+9. SC:IF | FOR | SWITCH | WHILE | DOWHILE
+	
+
+_____________________________________________________IF
+9. IF
+if(COMPARACION){             if(COMPARACION){
+  <sentencias>       			<sentencias>
+}else{            		}
+    <sentencias>
+}
+POSIBLE GRAMATICA-> IF PAR_A CONDICION PAR_C LL_A SENTENCIAS LL_C | IF PAR_A CONDICION PAR_C LL_A SENTENCIAS LL_C ELSE LL_A SENTENCIAS LL_C
+
+
+_____________________________________________________FOR
+ 
+10. FOR
+for(int i=0; i<10; i++){
+	<sentencia>
+}
+-> for(ASIGNACION_GENERAL CONDICION P_COMA INCDEC){
+	<SENTENCIAS>
+}
+
+_____________________________________________________SWITCH
+11. SWITCH
+
+switch(IDENTIFICADOR){
+	  <CASES> DEFAULT T_POINT <SENTENCIAS> BREAK P_COMA
+	| <CASES> DEFAULT T_POINT <SENTENCIAS> 
+}
+
+
+11.1 CASES
+	   CASE DIGIT T_POINT<SENTENCIAS> BREAK P_COMA CASES
+	| CASE DIGIT T_POINT<SENTENCIAS> BREAK P_COMA
+	| CASE DIGIT T_POINT<SENTENCIAS>  CASES
+	| CASE DIGIT T_POINT<SENTENCIAS>
+
+
+_____________________________________________________WHILE
+12. WHILE
+while(CONDICION){
+	<SENTENCIAS>
+}
+->POSIBLE GRAMATICA-> WHILE PAR_A CONDICION PAR_C LL_A <SENTENCIAS> LL_C
+
+
+_____________________________________________________DO WHILE
+13. DO WHILE
+do{
+<sentencias>
+}while(condicion);
+POSIBLE GRAMATICA->  DO LL_A <SENTENCIAS> LL_C WHILE P_A CONDICION P_C P_COMA
+
+< FIN DE SENTENCIAS DE CONTROL>
+
+
+
+
+_____________________________________________________EXTRAS / UTILIDADES_____________________________________________________
+_____________________________________________________IMPRIMIR
+14. IMPRIMIR
+Console.Write("algo");
+POSIBLE GRAMATICA-> PRINT P_A CADENA P_C P_COMA
+
+_____________________________________________________TIPO DE DATO
+16. TIPO DE DATO
+POSIBLE GRAMATICA:
+TP: INT
+  | STRING
+  | DOUBLE
+  | BOOLEANO
+  | CHAR
+
+_____________________________________________________COMPARACIONES LOÓGICAS
+
+CL:
+	IDENTIFICADOR AND IDENTIFICADOR
+     | IDENTIFICADOR OR IDENTIFICADOR
+     | IDENTIFICADOR NOT IDENTIFICADOR
+-> aqui se podría comparar una comparacion relacional
+
+_____________________________________________________COMPARACIONES RELACIONALES
+
+CR:
+	DIGIT MAYOR DIGIT
+	| DIGIT MENOR DIGIT
+	| DIGIT IGUAL IGUAL DIGIT
+	| DIGIT MAYOR IGUAL DIGIT
+	| DIGIT MENOR IGUAL DIGIT
+	| DIGIT NOT IGUAL DIGIT
+
+-> hacer lo mismo pero con decimales
+
+_____________________________________________________EXPRESIONES ARITMETICAS
+
+EXPR::= EXPR MAS EXPR
+	| EXPR MENOS EXPR
+	| EXPR POR EXPR
+	| EXPR DIV EXPR
+	| ( EXPR )
+	| DIGIT
+	| DECIMAL
+
+_____________________________________________________COMENTARIOS
+
+COM::= SIMPLE_COMMENT
+	| MULTI_COMMENT
+
+_____________________________________________________INCREMENTACION Y DECREMENTACION_____________________________________________________
+
+
+0.1 INCDEC::= IDENTIFICADOR INCREMENT | IDENTIFICADOR DECREMENT
+
+
+
+
+
+
+
+
+
+
+

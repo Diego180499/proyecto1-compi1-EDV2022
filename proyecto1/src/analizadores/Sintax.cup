@@ -1,0 +1,170 @@
+package analizadores;
+
+import java_cup.runtime.*;
+import java.util.ArrayList;
+import python.Declaracion;
+parser code
+
+{:
+
+    private Symbol s;
+    
+    /**
+     * Método al que se llama automáticamente ante algún error sintactico.
+     **/
+    public void syntax_error(Symbol s){
+        System.out.println("Error Sintáctico en la Línea " + (s.left) +
+        " Columna "+s.right+ ". No se esperaba este componente: " +s.value+"."); 
+        this.s = s;
+    }
+
+    /**
+     * Método al que se llama automáticamente ante algún error sintáctico 
+     * en el que ya no es posible una recuperación de errores.
+     **/ 
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{ 
+        System.out.println("Error síntactico irrecuperable en la Línea " + 
+        (s.left)+ " Columna "+s.right+". Componente " + s.value + 
+        " no reconocido."); 
+    }  
+
+    public Symbol getS(){
+        return this.s;
+    }
+
+
+
+    //ACCIONES********
+    
+    private ArrayList<Declaracion> declaraciones = new ArrayList<>();
+
+    private void agregarDeclaracion(String identificador, Double valor){
+        String valorFinal = String.valueOf(valor);
+        Declaracion declaracion = new Declaracion(identificador, valorFinal);
+        declaraciones.add(declaracion);
+    }
+    
+    public ArrayList<Declaracion> getDeclaraciones(){
+        return this.declaraciones;
+    }
+
+:};
+
+//TERMINALES:
+terminal BREAK,CONTINUE,DO,FOREACH,NEW,OUT,RETURN,TRUE,DOUBLE,INT,NULL,PUBLIC,SWITCH,
+CASE,DEFAULT,ELSE,IF,STATIC,VOID,BOOL,CONST,FALSE,FOR,STRING,WHILE,
+MIN,GREATER,EQUAL,COMA,SEMI_COLON,POINT,T_POINTS,P_A,P_C,LL_A,LL_C,QUOTE,S_QUOTE,
+SIMPLE_COMMENT,MULTI_COMMENT,ERROR,BOOLEANO,CARACTER,PRINT, T_EQUAL,
+MIN_EQUAL,GREATER_EQUAL,DISTINCT,AND,OR,NOT,MAIN,INCREMENT, DECREMENT;
+
+terminal String IDENTIFICADOR;
+terminal String DIGIT;
+terminal String DECIMAL;
+terminal String CADENA;
+terminal String PLUS, LESS, MULT, DIV;
+
+//NO TERMINALES:
+non terminal inicio;
+non terminal Double expr;
+
+precedence left PLUS, LESS;
+precedence left MULT, DIV;
+
+start with inicio;
+
+//_____________________________________________________INICIO_____________________________________________________
+inicio::= instrucciones
+;
+
+instrucciones ::= instruccion instrucciones
+    | instruccion
+;
+
+instruccion ::= s_g
+;
+
+//_____________________________________________________sentencia general_____________________________________________________
+
+s_g ::= sc s_g
+    | ag s_g
+    | as s_g
+    | dv s_g
+    | ld s_g
+    | llf s_g
+    | df s_g
+    | com s_g
+    | imprimir s_g
+    |
+;
+
+_____________________________________________________ASIGNACIONES GENERALES_____________________________________________________
+
+ag ::= d_type IDENTIFICADOR EQUAL expr_g SEMI_COLON
+;
+
+expr_g ::= expr
+    | llf
+    | IDENTIFICADOR
+    | BOOLEANO
+    | CADENA
+    | CARACTER
+    |
+;
+
+//_____________________________________________________ASIGNACION SIMPLE_____________________________________________________
+
+as ::= IDENTIFICADOR EQUAL expr_g SEMI_COLON
+;
+
+//_____________________________________________________DECLARACION DE VARIABLES_____________________________________________________
+
+dv ::= d_type IDENTIFICADOR SEMI_COLON
+;
+
+
+//_____________________________________________________LISTA DE DECLARACIONES_____________________________________________________
+
+ld ::= d_type l SEMI_COLON    
+;
+
+l ::= IDENTIFICADOR COMA l
+    | IDENTIFICADOR
+;
+
+
+//_____________________________________________________LLAMADAS A FUNCION_____________________________________________________
+
+llf ::= IDENTIFICADOR P_A params P_C SEMI_COLON
+    |IDENTIFICADOR P_A  P_C SEMI_COLON
+;
+
+params ::= IDENTIFICADOR COMA params
+    | IDENTIFICADOR
+;
+
+
+_____________________________________________________DECLARACION DE METODOS/FUNCIONES_____________________________________________________
+
+df ::= d_type IDENTIFICADOR P_A params_type P_C LL_A s_g  RETURN expr_g  LL_C
+    | VOID MAIN P_A P_C LL_A s_g LL_C
+    | VOID IDENTIFICADOR P_A params_type P_C LL_A s_g LL_C
+;
+
+params_type ::= d_type IDENTIFICADOR COMA params_type
+    | d_type IDENTIFICADOR
+    |
+;
+
+
+_____________________________________________________SENTENCIAS DE CONTROL_____________________________________________________
+
+
+//Expresiones aritméticas
+expr::= expr:e1 PLUS expr:e2    {:RESULT=e1+e2; :}    
+    | expr:e1 LESS expr:e2      {:RESULT=e1-e2; :}
+    | expr:e1 MULT expr:e2      {:RESULT=e1*e2; :}
+    | expr:e1 DIV expr:e2       {:RESULT=e1/e2; :}
+    | DIGIT:d                   {:RESULT=new Double(d); :}
+    | DECIMAL:f                 {:RESULT=new Double(f); :}
+;
+
